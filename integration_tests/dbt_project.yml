@@ -1,0 +1,23 @@
+name: 'bqai_integration_tests'
+version: '0.1.0'
+config-version: 2
+
+profile: 'bqai_integration_tests'
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+
+require-dbt-version: [">=1.7.0", "<2.0.0"]
+
+# These vars mirror the ones a consuming project sets. Override them via
+# --vars or your own profile before running against a real BigQuery project.
+vars:
+  bqai_connection: 'my-project.us.my-connection'
+  bqai_endpoint: 'gemini-2.5-flash'
+  bqai_embedding_endpoint: 'text-embedding-005'
+  bqai_model_params: '{"generation_config":{"thinking_config":{"thinking_budget":0}}}'
+  bqai_max_error_ratio: 0.2
+
+models:
+  bqai_integration_tests:
+    +materialized: view
