@@ -1,0 +1,4 @@
+packages:
+  # Install the package from the parent directory so tests always exercise the
+  # working tree. Run `dbt deps` from within integration_tests/.
+  - local: ../
