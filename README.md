@@ -49,6 +49,54 @@ packages:
 
 Then `dbt deps`. (A dbt Hub entry will follow once the package stabilizes.)
 
+
+## Prerequisites: set up a BigQuery connection
+
+BigQuery AI functions don't call Vertex AI directly with your
+credentials. They go through a **Cloud resource connection**: a
+BigQuery-managed service account that acts as the bridge between
+your SQL queries and Vertex AI models. No connection (or a
+misconfigured one) means every `AI.*` call fails.
+
+You only need to do this once per project. Three steps:
+
+**1. Create the connection**
+
+> ⚠️ The connection MUST be in the same location as your BigQuery
+> datasets. A `us` connection with an `EU` dataset fails with a
+> `Not found: Connection` error. This is the #1 setup mistake.
+
+```bash
+bq mk --connection \
+  --location=EU \
+  --connection_type=CLOUD_RESOURCE \
+  bqai-connection
+```
+
+**2. Get the connection's service account**
+
+```bash
+bq show --connection PROJECT.EU.bqai-connection
+```
+
+Copy the `serviceAccountId` from the output
+(it looks like `bqcx-...@gcp-sa-bigquery-condel.iam.gserviceaccount.com`).
+
+**3. Grant it access to Vertex AI**
+
+```bash
+gcloud projects add-iam-policy-binding PROJECT \
+  --member="serviceAccount:SERVICE_ACCOUNT_ID" \
+  --role="roles/aiplatform.user"
+```
+
+IAM propagation can take 1-2 minutes. If your first query fails
+with a permission error right after this step, wait and retry.
+
+Then reference it in `dbt_project.yml` as
+`PROJECT.LOCATION.CONNECTION_ID`, e.g. `my-project.eu.bqai-connection`.
+
+
 ## Configure once
 
 In the **consuming project's** `dbt_project.yml`:
