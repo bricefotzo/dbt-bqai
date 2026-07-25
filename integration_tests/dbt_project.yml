@@ -7,7 +7,7 @@ profile: 'bqai_integration_tests'
 model-paths: ["models"]
 macro-paths: ["macros"]
 
-require-dbt-version: [">=1.7.0", "<2.0.0"]
+require-dbt-version: [">=1.7.0", "<3.0.0"]
 
 # These vars mirror the ones a consuming project sets. Override them via
 # --vars or your own profile before running against a real BigQuery project.

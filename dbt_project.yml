@@ -5,7 +5,7 @@ config-version: 2
 # This is a macro-only package: it ships no models, seeds, or tests of its own.
 # Consuming projects install it via packages.yml and call the macros as
 # `{{ bqai.<macro>(...) }}`.
-require-dbt-version: [">=1.7.0", "<2.0.0"]
+require-dbt-version: [">=1.7.0", "<3.0.0"]
 
 macro-paths: ["macros"]
 

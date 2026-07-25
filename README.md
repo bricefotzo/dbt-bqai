@@ -1,5 +1,9 @@
 # dbt-bqai
 
+<p align="center">
+  <img src="./assets/logo.jpg" alt="dbt-bqai logo" width="600"/>
+</p>
+
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/bricefotzo/dbt-bqai/blob/main/LICENSE)
 [![dbt package](https://img.shields.io/badge/dbt-package-FF694B?logo=dbt)](https://github.com/bricefotzo/dbt-bqai)
 [![GitHub Release](https://img.shields.io/github/v/release/bricefotzo/dbt-bqai)](https://github.com/bricefotzo/dbt-bqai/releases)
