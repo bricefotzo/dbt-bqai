@@ -43,7 +43,7 @@ dbt macros that wrap the BigQuery **AI.\*** function family so you can call gene
 classification, scoring, filtering, and embeddings from your dbt models — without repeating the
 connection, endpoint, and model-parameter boilerplate on every call.
 
-You configure your connection and default model **once** in `dbt_project.yml`. Every macro resolves
+You configure your connection and default model **once** in [dbt_project.yml](./dbt_project.yml). Every macro resolves
 them for you. Override per call when you need to.
 
 ```sql
@@ -132,7 +132,7 @@ gcloud projects add-iam-policy-binding PROJECT \
 IAM propagation can take 1-2 minutes. If your first query fails
 with a permission error right after this step, wait and retry.
 
-Then reference it in `dbt_project.yml` as
+Then reference it in [dbt_project.yml](./dbt_project.yml) as
 `PROJECT.LOCATION.CONNECTION_ID`, e.g. `my-project.eu.bqai-connection`.
 
 
@@ -271,14 +271,12 @@ models:
 
 ## Examples
 
-Ready-to-use SQL model blueprints are available in the [examples/](file:///c:/Users/brice/workspace/dbt-bqai/examples) directory:
+Ready-to-use SQL model blueprints are available in the [examples/](./examples) directory:
 
-- [01_customer_feedback_enrichment.sql](file:///c:/Users/brice/workspace/dbt-bqai/examples/01_customer_feedback_enrichment.sql) — Multi-macro pipeline (`classify`, `score`, `generate`, `ai_if`) for customer review enrichment.
-- [02_structured_data_extraction.sql](file:///c:/Users/brice/workspace/dbt-bqai/examples/02_structured_data_extraction.sql) — Extracting strongly-typed BigQuery STRUCT columns from raw text using `output_schema`.
-- [03_semantic_embeddings.sql](file:///c:/Users/brice/workspace/dbt-bqai/examples/03_semantic_embeddings.sql) — Generating embedding vectors (`ARRAY<FLOAT64>`) for downstream BigQuery `VECTOR_SEARCH`.
-- [04_cost_optimized_classification.sql](file:///c:/Users/brice/workspace/dbt-bqai/examples/04_cost_optimized_classification.sql) — Accelerated, low-cost classification via precomputed embeddings and `optimization_mode='MINIMIZE_COST'`.
-
-
+- [01_customer_feedback_enrichment.sql](./examples/01_customer_feedback_enrichment.sql) — Multi-macro pipeline (`classify`, `score`, `generate`, `ai_if`) for customer review enrichment.
+- [02_structured_data_extraction.sql](./examples/02_structured_data_extraction.sql) — Extracting strongly-typed BigQuery STRUCT columns from raw text using `output_schema`.
+- [03_semantic_embeddings.sql](./examples/03_semantic_embeddings.sql) — Generating embedding vectors (`ARRAY<FLOAT64>`) for downstream BigQuery `VECTOR_SEARCH`.
+- [04_cost_optimized_classification.sql](./examples/04_cost_optimized_classification.sql) — Accelerated, low-cost classification via precomputed embeddings and `optimization_mode='MINIMIZE_COST'`.
 
 ## Cost note
 
@@ -294,11 +292,10 @@ The macros are validated by an offline render test that mimics dbt's Jinja envir
 the generated SQL — no BigQuery connection required:
 
 ```bash
-pip install jinja2
-python3 tests/render_test.py
+uv run --with jinja2 python tests/render_test.py
 ```
 
-`integration_tests/` is a runnable dbt project (example models under `integration_tests/models/`) that
+The [integration_tests/](./integration_tests) directory contains a runnable dbt project (example models under [integration_tests/models/](./integration_tests/models)) that
 exercises every macro against a real BigQuery project. Point the `bqai_integration_tests` profile at
 your project, set the `bqai_*` vars, then `dbt deps && dbt build`.
 
@@ -311,7 +308,7 @@ your project, set the `bqai_*` vars, then `dbt deps && dbt build`.
 
 ## Contribution
 
-Contributions welcome. Open an issue to discuss before large changes. Run `python3 tests/render_test.py`
+Contributions welcome. Open an issue to discuss before large changes. Run `uv run --with jinja2 python tests/render_test.py`
 locally before submitting a PR. Feel free to reach out on [LinkedIn](https://www.linkedin.com/in/bricefotzo/).
 
 ## Acknowledgments
