@@ -35,9 +35,9 @@ def _build_env():
         with open(path) as fh:
             sources.append(fh.read())
     combined = "\n".join(sources)
-    # Jinja hides underscore-prefixed macros from a module's exported namespace;
-    # dbt does not. Rename them (definitions and call sites alike) so the test
-    # harness can resolve them. The real macro files are untouched.
+    import re
+    combined = re.sub(r'\{%\s*test\s+([a-zA-Z0-9_]+)\s*\(', r'{% macro test_\1(', combined)
+    combined = combined.replace("{% endtest %}", "{% endmacro %}")
     combined = combined.replace("_bqai_", "zbqai_")
 
     class NS:
@@ -140,6 +140,12 @@ check("classify embeddings suppresses max_error_ratio",
       "bqai.classify(\"body\", [\"a\"], embeddings='emb')",
       must_contain=["embeddings => emb"], must_not_contain=["max_error_ratio"])
 
+check_raises("classify invalid output_mode raises",
+             'bqai.classify("body", ["a"], output_mode="invalid")', "COMPILER_ERROR")
+
+check_raises("classify invalid optimization_mode raises",
+             'bqai.classify("body", ["a"], optimization_mode="INVALID")', "COMPILER_ERROR")
+
 # --- score / ai_if ----------------------------------------------------------
 check("score", 'bqai.score("(\'x: \', body)")',
       must_contain=["AI.SCORE(('x: ', body)", "max_error_ratio => 0.2"])
@@ -151,6 +157,9 @@ check("ai_if embeddings suppresses max_error_ratio",
       "bqai.ai_if(\"('x: ', review)\", embeddings='emb')",
       must_contain=["embeddings => emb"], must_not_contain=["max_error_ratio"])
 
+check_raises("ai_if invalid optimization_mode raises",
+             'bqai.ai_if("(\'x: \', review)", optimization_mode="INVALID")', "COMPILER_ERROR")
+
 # --- embed ------------------------------------------------------------------
 check("embed uses embedding endpoint, not model_params",
       'bqai.embed("body", task_type="SEMANTIC_SIMILARITY")',
@@ -160,6 +169,15 @@ check("embed uses embedding endpoint, not model_params",
 
 check_raises("embed without endpoint raises", 'bqai.embed("body")', "COMPILER_ERROR",
              scenario_vars={})
+
+# --- generic tests -----------------------------------------------------------
+check("assert_embedding_dimension test macro",
+      'bqai.test_assert_embedding_dimension("my_model", "embedding", 768)',
+      must_contain=["from my_model", "embedding is null", "array_length(embedding) != 768"])
+
+check("assert_valid_category test macro",
+      'bqai.test_assert_valid_category("my_model", "sentiment", ["pos", "neg"])',
+      must_contain=["from my_model", "sentiment is not null", "'pos', 'neg'"])
 
 # --- report -----------------------------------------------------------------
 if _failures:

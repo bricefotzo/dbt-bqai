@@ -6,13 +6,30 @@ on:
   pull_request:
 
 jobs:
-  render-tests:
+  offline-macro-tests:
+    name: Offline Macro Render Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Offline macro render tests
+        run: uv run --with jinja2 python tests/render_test.py
+
+  integration-tests-parse:
+    name: Parse Integration Tests Project
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@v5
         with:
           python-version: "3.11"
-      - run: pip install jinja2
-      - name: Offline macro render tests
-        run: python3 tests/render_test.py
+      - name: Install dependencies and parse dbt project
+        run: |
+          uv run --with dbt-bigquery dbt deps --project-dir integration_tests --profiles-dir integration_tests/ci
+          uv run --with dbt-bigquery dbt parse --project-dir integration_tests --profiles-dir integration_tests/ci
+

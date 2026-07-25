@@ -1,0 +1,8 @@
+bqai_integration_tests:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth
+      project: dummy-gcp-project
+      dataset: dummy_dataset

@@ -18,6 +18,9 @@
                       per-call overrides for the project vars.
 -#}
 {%- macro ai_if(prompt, connection_id=none, endpoint=none, examples=none, embeddings=none, optimization_mode=none, max_error_ratio=none) -%}
+  {%- if optimization_mode is not none and optimization_mode not in ['MINIMIZE_COST', 'MAXIMIZE_QUALITY'] -%}
+    {{ exceptions.raise_compiler_error("bqai.ai_if: 'optimization_mode' must be 'MINIMIZE_COST' or 'MAXIMIZE_QUALITY', got: " ~ optimization_mode) }}
+  {%- endif -%}
   {%- set mer = max_error_ratio if max_error_ratio is not none else var('bqai_max_error_ratio', none) -%}
 AI.IF({{ prompt }}
   {%- if examples is not none %}, examples => {{ examples }}{% endif -%}

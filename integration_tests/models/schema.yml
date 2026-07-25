@@ -1,0 +1,18 @@
+version: 2
+
+models:
+  - name: example_reviews
+    columns:
+      - name: sentiment
+        data_tests:
+          - bqai.assert_valid_category:
+              arguments:
+                allowed_categories: ["positive", "neutral", "negative"]
+
+  - name: example_embeddings
+    columns:
+      - name: embedding
+        data_tests:
+          - bqai.assert_embedding_dimension:
+              arguments:
+                expected_dimension: 768

@@ -19,6 +19,12 @@
                       per-call overrides for the project vars.
 -#}
 {%- macro classify(input, categories, output_mode=none, connection_id=none, endpoint=none, examples=none, embeddings=none, optimization_mode=none, max_error_ratio=none) -%}
+  {%- if output_mode is not none and output_mode not in ['single', 'multi'] -%}
+    {{ exceptions.raise_compiler_error("bqai.classify: 'output_mode' must be 'single' or 'multi', got: " ~ output_mode) }}
+  {%- endif -%}
+  {%- if optimization_mode is not none and optimization_mode not in ['MINIMIZE_COST', 'MAXIMIZE_QUALITY'] -%}
+    {{ exceptions.raise_compiler_error("bqai.classify: 'optimization_mode' must be 'MINIMIZE_COST' or 'MAXIMIZE_QUALITY', got: " ~ optimization_mode) }}
+  {%- endif -%}
   {%- set mer = max_error_ratio if max_error_ratio is not none else var('bqai_max_error_ratio', none) -%}
 AI.CLASSIFY({{ input }}, categories => {{ bqai._bqai_array(categories) }}
   {%- if examples is not none %}, examples => {{ examples }}{% endif -%}

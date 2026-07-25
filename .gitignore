@@ -216,3 +216,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# dbt artifacts
+dbt_packages/
+integration_tests/dbt_packages/
+integration_tests/target/
+logs/
+
